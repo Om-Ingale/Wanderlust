@@ -1,49 +1,64 @@
 # 🧭 Wanderlust
 
-An Airbnb-inspired full-stack web application where users can browse, create, and review property listings from around the world — complete with interactive maps, image uploads, and user authentication.
+> A full-stack Airbnb-inspired web application to **discover and list unique stays** around the world — built with Node.js, Express, MongoDB, EJS, Cloudinary, and Mapbox.
+
+![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5.x-000000?style=flat&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-8.x-47A248?style=flat&logo=mongodb&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=flat&logo=bootstrap&logoColor=white)
+![Mapbox](https://img.shields.io/badge/Mapbox-GL%20JS-000000?style=flat&logo=mapbox&logoColor=white)
 
 ---
 
-## 🌐 Live Demo
+## 📌 Table of Contents
 
-> Coming soon
-
----
-
-## 📸 Screenshots
-
-> Add screenshots here after deployment
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+- [Environment Variables](#-environment-variables)
+- [Seed Data](#-seed-data)
+- [Route Reference](#-route-reference)
+- [Image Uploads](#-image-uploads-cloudinary)
+- [Maps](#-maps-mapbox)
+- [Auth](#-authentication)
+- [Roadmap](#-roadmap)
+- [License](#-license)
 
 ---
 
 ## ✨ Features
 
-- Browse property listings from around the world
-- Create, edit, and delete your own listings
-- Upload listing images (stored on Cloudinary)
-- Interactive Mapbox map on each listing's detail page
-- Leave star ratings and comments as reviews
-- User authentication — sign up, log in, log out
-- Flash messages for success and error feedback
-- Ownership-based access control (only owners can edit/delete their listings)
-- Responsive UI using Bootstrap 5
-- Custom 404 not-found page
+- 🔐 **Authentication** — Register, login, logout via Passport.js local strategy
+- 🏠 **Listings** — Full CRUD with image upload, location, price, and description
+- ⭐ **Reviews & Ratings** — Star ratings with comments on every listing
+- 🗺️ **Interactive Maps** — Mapbox GL JS map with geocoded location on each listing page
+- 🛡️ **Authorization** — Owners manage their own listings; review authors manage their reviews
+- ☁️ **Cloudinary Uploads** — Images stored on Cloudinary, served via CDN
+- 💬 **Flash Messages** — Success and error feedback on every action
+- 📱 **Responsive UI** — Bootstrap 5 with custom CSS and Plus Jakarta Sans typography
+- 🗃️ **Persistent Sessions** — Secure cookie-based sessions via express-session
 
 ---
 
-## 🛠️ Tech Stack
+## 🧰 Tech Stack
 
-| Layer         | Technology                            |
-| ------------- | ------------------------------------- |
-| Runtime       | Node.js                               |
-| Framework     | Express.js v5                         |
-| Database      | MongoDB + Mongoose                    |
-| Templating    | EJS + ejs-mate                        |
-| Auth          | Passport.js (passport-local-mongoose) |
-| Image Storage | Cloudinary + Multer                   |
-| Maps          | Mapbox GL JS + Mapbox Geocoding API   |
-| Styling       | Bootstrap 5 + Custom CSS              |
-| Sessions      | express-session + connect-flash       |
+| Layer          | Technology                            |
+| -------------- | ------------------------------------- |
+| Runtime        | Node.js 18+                           |
+| Framework      | Express.js 5                          |
+| Database       | MongoDB + Mongoose 8                  |
+| Auth           | Passport.js + passport-local-mongoose |
+| Templating     | EJS + ejs-mate                        |
+| Styling        | Bootstrap 5.3 + Custom CSS            |
+| Icons          | Font Awesome 6                        |
+| Fonts          | Plus Jakarta Sans (Google Fonts)      |
+| Image Uploads  | Multer + Cloudinary                   |
+| Maps           | Mapbox GL JS v3 + Mapbox Geocoding    |
+| Sessions       | express-session                       |
+| Flash Messages | connect-flash                         |
+| Form Methods   | method-override                       |
+| Dev Server     | nodemon                               |
 
 ---
 
@@ -51,79 +66,114 @@ An Airbnb-inspired full-stack web application where users can browse, create, an
 
 ```
 wanderlust/
-├── controllers/
-│   ├── listing.js       # Listing CRUD logic
-│   ├── review.js        # Review create/delete logic
-│   └── user.js          # Auth logic (register, login, logout)
+├── app.js                    # Entry point
+├── middleware.js             # isLoggedin, saveRedirectUrl
+├── cloudConfig.js            # Cloudinary + Multer config
+├── .env                      # Environment variables (never commit)
+├── .gitignore
+├── package.json
+├── README.md
+│
+├── init/
+│   ├── data.js               # 28 sample listings
+│   └── index.js              # DB seeder script
+│
+├── utils/
+│   ├── ExpressError.js       # Custom error class
+│   └── wrapAsync.js          # Async error wrapper
+│
 ├── models/
-│   ├── listing.js       # Listing schema (with GeoJSON geometry)
-│   ├── review.js        # Review schema
-│   └── User.js          # User schema (passport-local-mongoose)
+│   ├── listing.js            # Listing schema with GeoJSON geometry
+│   ├── review.js             # Review schema (rating + comment)
+│   └── User.js               # User schema (passport-local-mongoose)
+│
 ├── routes/
-│   ├── listings.js      # Listing routes
-│   ├── reviews.js       # Review routes
-│   └── User.js          # Auth routes
+│   ├── listings.js           # Listing routes
+│   ├── reviews.js            # Review routes
+│   └── User.js               # Auth routes
+│
+├── controllers/
+│   ├── listing.js            # Listing CRUD + Cloudinary + Mapbox logic
+│   ├── review.js             # Review create/delete logic
+│   └── user.js               # Register, login, logout logic
+│
 ├── views/
 │   ├── layouts/
-│   │   └── boilerplate.ejs
+│   │   └── boilerplate.ejs   # Master layout
 │   ├── includes/
 │   │   ├── navbar.ejs
 │   │   ├── footer.ejs
 │   │   └── flash.ejs
 │   ├── listings/
-│   │   ├── index.ejs
-│   │   ├── show.ejs
-│   │   ├── new.ejs
-│   │   └── edit.ejs
-│   └── users/
-│       ├── login.ejs
-│       └── signin.ejs
-├── public/
-│   ├── css/
-│   │   ├── style.css
-│   │   └── rating.css
-│   └── js/
-│       ├── script.js    # Bootstrap form validation
-│       └── map.js       # Mapbox map init
-├── utils/
-│   ├── ExpressError.js  # Custom error class
-│   └── wrapAsync.js     # Async error wrapper
-├── init/
-│   ├── data.js          # Seed data
-│   └── index.js         # DB seed script
-├── app.js               # Express app entry point
-├── middleware.js         # isLoggedin, saveRedirectUrl
-├── cloudConfig.js        # Cloudinary + multer config
-└── .env                 # Environment variables (not committed)
+│   │   ├── index.ejs         # All listings grid
+│   │   ├── show.ejs          # Listing detail + map + reviews
+│   │   ├── new.ejs           # Create listing form
+│   │   └── edit.ejs          # Edit listing form
+│   ├── users/
+│   │   ├── login.ejs
+│   │   └── signin.ejs
+│   ├── error.ejs
+│   └── notfound.ejs
+│
+└── public/
+    ├── css/
+    │   ├── style.css         # Custom styles
+    │   └── rating.css        # Star rating widget
+    └── js/
+        ├── script.js         # Bootstrap form validation
+        └── map.js            # Mapbox map initialisation
 ```
 
 ---
 
-## ⚙️ Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js v18+
-- MongoDB (local or Atlas)
-- A [Cloudinary](https://cloudinary.com/) account
-- A [Mapbox](https://mapbox.com/) account
+- [Node.js](https://nodejs.org/) v18+
+- [MongoDB](https://www.mongodb.com/try/download/community) locally **or** a [MongoDB Atlas](https://cloud.mongodb.com) cluster
+- [Cloudinary](https://cloudinary.com) account
+- [Mapbox](https://mapbox.com) account (free tier works)
 
-### Installation
-
-1. **Clone the repository**
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/your-username/wanderlust.git
 cd wanderlust
 ```
 
-2. **Install dependencies**
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-3. **Set up environment variables**
+### 3. Set up environment variables
+
+```bash
+cp .env.example .env
+# Open .env and fill in your credentials (see below)
+```
+
+### 4. Seed the database _(optional)_
+
+```bash
+node init/index.js
+```
+
+### 5. Start the development server
+
+```bash
+npx nodemon app.js
+# or
+node app.js
+```
+
+### 6. Visit `http://localhost:8080/listings`
+
+---
+
+## ⚙️ Environment Variables
 
 Create a `.env` file in the root directory:
 
@@ -140,58 +190,50 @@ CLOUD_API_SECRET=your_cloudinary_api_secret
 SESSION_SECRET=your_strong_random_secret
 ```
 
-4. **Seed the database** _(optional)_
+| Variable           | Description                                       |
+| ------------------ | ------------------------------------------------- |
+| `MAP_TOKEN`        | Mapbox public token for geocoding and map display |
+| `CLOUD_NAME`       | Cloudinary cloud name                             |
+| `CLOUD_API_KEY`    | Cloudinary API key                                |
+| `CLOUD_API_SECRET` | Cloudinary API secret                             |
+| `SESSION_SECRET`   | Secret string used to sign session cookies        |
+
+> ⚠️ Never commit your `.env` file. Make sure it is listed in `.gitignore`.
+
+---
+
+## 🌱 Seed Data
+
+The `init/` folder contains 28 sample listings spanning locations from Malibu to the Maldives.
 
 ```bash
 node init/index.js
 ```
 
-5. **Start the server**
-
-```bash
-node app.js
-# or with nodemon for development
-npx nodemon app.js
-```
-
-6. **Visit** `http://localhost:8080/listings`
+This will clear the `listings` collection and insert all sample listings. Update the `owner` field in `init/index.js` to point to a valid user ObjectId in your database.
 
 ---
 
-## 🔐 Environment Variables
-
-| Variable           | Description                                                     |
-| ------------------ | --------------------------------------------------------------- |
-| `MAP_TOKEN`        | Mapbox public access token (used for geocoding and map display) |
-| `CLOUD_NAME`       | Cloudinary cloud name                                           |
-| `CLOUD_API_KEY`    | Cloudinary API key                                              |
-| `CLOUD_API_SECRET` | Cloudinary API secret                                           |
-| `SESSION_SECRET`   | Secret string for express-session                               |
-
-> ⚠️ Never commit your `.env` file. Make sure `.env` is listed in `.gitignore`.
-
----
-
-## 🗺️ Routes
+## 🗺️ Route Reference
 
 ### Listings
 
-| Method | Route                | Description          |
-| ------ | -------------------- | -------------------- |
-| GET    | `/listings`          | All listings (index) |
-| GET    | `/listings/new`      | New listing form     |
-| POST   | `/listings`          | Create a listing     |
-| GET    | `/listings/:id`      | Show a listing       |
-| GET    | `/listings/:id/edit` | Edit listing form    |
-| PUT    | `/listings/:id`      | Update a listing     |
-| DELETE | `/listings/:id`      | Delete a listing     |
+| Method | Route                | Description          | Auth Required |
+| ------ | -------------------- | -------------------- | ------------- |
+| GET    | `/listings`          | All listings (index) | No            |
+| GET    | `/listings/new`      | New listing form     | Yes           |
+| POST   | `/listings`          | Create a listing     | Yes           |
+| GET    | `/listings/:id`      | Show a listing       | No            |
+| GET    | `/listings/:id/edit` | Edit listing form    | Yes (owner)   |
+| PUT    | `/listings/:id`      | Update a listing     | Yes (owner)   |
+| DELETE | `/listings/:id`      | Delete a listing     | Yes (owner)   |
 
 ### Reviews
 
-| Method | Route                             | Description     |
-| ------ | --------------------------------- | --------------- |
-| POST   | `/listings/:id/reviews`           | Post a review   |
-| DELETE | `/listings/:id/reviews/:reviewID` | Delete a review |
+| Method | Route                             | Description     | Auth Required |
+| ------ | --------------------------------- | --------------- | ------------- |
+| POST   | `/listings/:id/reviews`           | Post a review   | Yes           |
+| DELETE | `/listings/:id/reviews/:reviewID` | Delete a review | Yes (author)  |
 
 ### Auth
 
@@ -205,54 +247,63 @@ npx nodemon app.js
 
 ---
 
-## 🚧 Known Issues & Planned Fixes
+## ☁️ Image Uploads (Cloudinary)
 
-These are tracked bugs and improvements identified during code review, planned for future releases.
+- One image per listing
+- Accepted formats: `jpg`, `jpeg`, `png`, `webp`
+- Uploaded via Multer and stored directly on Cloudinary
+- Image URL and filename are saved in the listing document
+- On listing update — a new image replaces the old one
 
-### 🐛 Bugs
+---
 
-- [ ] **`next` not in scope** — `user.js` controller's `signin` function calls `next(err)` inside `req.login()` callback but `next` is not a parameter. Causes `ReferenceError` on auth failure.
-- [ ] **Stale `createdAt` timestamp** — `review.js` model uses `default: Date.now()` (called once at server start). Change to `default: Date.now` (no parentheses) so each review gets its own timestamp.
-- [ ] **Catchall route error** — `app.js` calls `next()` after `res.render()` on the 404 route, potentially causing "headers already sent" errors. Remove the `next()` call.
-- [ ] **Duplicate 1-star radio input** — `show.ejs` has two radio inputs with `value="1"`, making 1-star ratings submit as "no rating". The `no-rate` input needs `value="0"`.
-- [ ] **Broken Google Font link** — `boilerplate.ejs` has a `<link href>` with an `@import url(...)` string instead of a real URL. Fonts are not loading from this tag. Remove the broken link (the import already exists in `style.css`).
+## 🗺️ Maps (Mapbox)
 
-### 🔐 Security
+- Location string → `[longitude, latitude]` GeoJSON Point via Mapbox Geocoding API
+- Stored in `listing.geometry` with the `Point` type
+- Rendered on the listing detail page using **Mapbox GL JS v3**
+- Custom red marker at zoom level 9
 
-- [ ] **No server-side validation** — Joi is installed but unused. Add Joi schemas to validate listing and review input before hitting the database.
-- [ ] **Mapbox token exposed** — The `MAP_TOKEN` is rendered directly into HTML in `show.ejs`. Create a domain-restricted Mapbox token for frontend use.
-- [ ] **Review delete missing auth** — The `DELETE /:reviewID` route in `reviews.js` has no `isLoggedin` check. Any unauthenticated request can delete reviews.
-- [ ] **Hardcoded session secret** — Replace `secret: 'mySecretCode'` in `app.js` with `process.env.SESSION_SECRET`.
-- [ ] **Hardcoded owner ID in seed** — `init/index.js` uses a hardcoded MongoDB ObjectId for the listing owner. Replace with a dynamic lookup or user creation.
-- [ ] **No geocoding error guard** — If Mapbox returns no results, `response.body.features[0]` crashes the server. Add a check before accessing `features[0]`.
+---
 
-### 🧹 Code Quality
+## 🔐 Authentication
 
-- [ ] **Unused imports** — `Listing`, `ExpressError`, and `wrapAsync` are imported in route files but logic has moved to controllers. Clean up.
-- [ ] **`app.listen` before routes** — The server starts listening inside `main().then()` before routes are registered lower in the file. Move `app.listen` to the end.
-- [ ] **Misleading naming** — `signin` / `renderSignin` actually handle registration, not sign-in. Rename to `register` / `renderRegister` for clarity.
-- [ ] **Broken HTML in `signin.ejs`** — The password field and submit button are incorrectly nested inside the email field's `<div>`. Fix the nesting so each field is a sibling `div`.
-- [ ] **404 image from external CDN** — `notfound.ejs` loads the 404 image from Vecteezy. Replace with the local `notfound_png.jpg` served from `/public`.
-- [ ] **No server-side ownership check** — Edit and delete routes rely only on view-level ownership checks. Add controller-level authorization.
+Passport.js with the `passport-local` strategy and `passport-local-mongoose` plugin.
+
+- Sessions persist across requests via `express-session`
+- Protected routes redirect unauthenticated users to `/login` with the original URL saved for post-login redirect
+- Passwords are hashed automatically by `passport-local-mongoose` — no manual bcrypt needed
+
+---
+
+## 🔮 Roadmap
+
+- [x] 🔐 Authentication (Passport.js)
+- [x] 🏠 Listings CRUD with Cloudinary image upload
+- [x] ⭐ Reviews & star ratings
+- [x] 🗺️ Mapbox location maps with geocoding
+- [x] 🛡️ Ownership-based authorization
+- [x] 💬 Flash messages
+- [ ] 🔍 Search and filter listings
+- [ ] 📄 Pagination on listings page
+- [ ] 👤 User profile page (own listings + reviews)
+- [ ] 🔖 Wishlist / saved listings
+- [ ] 🌐 Google OAuth login
+- [ ] 🗺️ Cluster map on listings index page
+- [ ] 📲 PWA support
 
 ---
 
 ## 🤝 Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you'd like to change.
+Pull requests are welcome. For major changes, open an issue first to discuss what you'd like to change.
 
 ---
 
 ## 📄 License
 
-[MIT](LICENSE)
+MIT — free to use, modify, and distribute.
 
 ---
 
-## 👤 Author
-
-> Om Ingale
-
----
-
-_Built with ❤️ . All Rights Reserved By Wanderlust._
+<p align="center">Built with ❤️ · All Rights Reserved By Wanderlust © 2025</p>
